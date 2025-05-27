@@ -1,0 +1,62 @@
+
+---
+title: "Análise de Basis da Soja - Paranaguá x CBOT"
+author: "Nathália Lima"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+# Introdução
+
+O objetivo deste notebook é calcular e visualizar a série histórica do **Basis**, que é a diferença entre o preço Spot (mercado físico) e o preço Futuro (CBOT). Esta análise é essencial para traders do agronegócio entenderem a formação de preço e comportamento do mercado.
+
+# Simulando Dados
+
+```{r}
+set.seed(42)
+dias <- seq(as.Date("2023-01-01"), by = "day", length.out = 90)
+
+# Preço Spot FOB Paranaguá (simulado)
+spot <- 150 + cumsum(rnorm(90, 0, 1))
+
+# Preço Futuro na CBOT (simulado)
+futuro <- 148 + cumsum(rnorm(90, 0, 1))
+
+# Criando DataFrame
+dados <- data.frame(Data = dias, Spot = spot, Futuro = futuro) %>%
+  mutate(Basis = Spot - Futuro)
+
+head(dados)
+```
+
+# Visualização da Série Histórica do Basis
+
+```{r}
+ggplot(dados, aes(x = Data)) +
+  geom_line(aes(y = Basis), color = "blue", size = 1) +
+  labs(title = "Série Histórica do Basis da Soja",
+       subtitle = "FOB Paranaguá - CBOT (Simulado)",
+       x = "Data",
+       y = "Basis (BRL)") +
+  theme_minimal()
+```
+
+# Análise e Conclusão
+
+O Basis reflete fatores como:
+
+- Logística (frete, armazenagem)
+- Câmbio (USD/BRL)
+- Oferta e demanda local vs internacional
+- Custos internos no Brasil
+
+A análise do Basis permite entender se o mercado local está mais valorizado ou desvalorizado em relação ao mercado internacional (CBOT).
+
+**Próximos passos:** Você pode substituir os dados simulados por dados reais, baixando de fontes como CEPEA (Spot) e Barchart ou B3 (Futuro).
